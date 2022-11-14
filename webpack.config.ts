@@ -1,60 +1,63 @@
-import path from "path"
-import { Configuration as WebpackConfiguration, HotModuleReplacementPlugin } from "webpack"
+import path from 'path'
+import ESLintPlugin from 'eslint-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server'
-import HtmlWebpackPlugin from "html-webpack-plugin"
+import {
+  Configuration as WebpackConfiguration,
+  HotModuleReplacementPlugin,
+} from 'webpack'
 
 interface Configuration extends WebpackConfiguration {
-  devServer?: WebpackDevServerConfiguration;
+  devServer?: WebpackDevServerConfiguration
 }
 
 const config: Configuration = {
   mode: 'development',
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   entry: './src/index.tsx',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|js)x?$/i,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
             presets: [
-              "@babel/preset-env",
-              "@babel/preset-react",
-              "@babel/preset-typescript",
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
             ],
           },
         },
       },
-      // {
-      //   test: /\.s[c,a]ss$/i,
-      //   use: [
-      //     { loader: 'style-loader' },
-      //     { loader: 'css-loader', options: { modules: true } },
-      //     { loader: 'sass-loader' }
-      //   ]
-      // }
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.scss'],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "src/index.html",
+      template: 'src/index.html',
     }),
     new HotModuleReplacementPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      async: false,
+    }),
+    new ESLintPlugin({
+      extensions: ['ts', 'tsx'],
+    }),
   ],
+  devtool: 'inline-source-map',
   devServer: {
-    static: path.join(__dirname, "build"),
+    static: path.join(__dirname, 'build'),
     historyApiFallback: true,
     port: 1226,
     open: true,
-    hot: true
+    hot: true,
   },
 }
 
