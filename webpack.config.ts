@@ -34,6 +34,28 @@ const config: Configuration = {
           },
         },
       },
+      {
+        test: /\.module.scss$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [['autoprefixer']],
+              },
+            },
+          },
+          'sass-loader',
+        ],
+      },
     ],
   },
   resolve: {
